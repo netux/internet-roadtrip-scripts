@@ -282,8 +282,18 @@
 				pauseUpdates(!updatesPaused);
 			}
 
+			function resetPov() {
+				internalHeading = canonicalPov.heading;
+				instance.setPov({
+					heading: canonicalPov.heading,
+					pitch: canonicalPov.pitch,
+					zoom: fovToZoom(canonicalPov.fov),
+				});
+			}
+
 			document.addEventListener("keydown", (event) => {
 				if (event.key === "Escape") toggleManualPause();
+				if (event.key === "Space") resetPov();
 			});
 
 			window.addEventListener("message", async (event) => {
@@ -295,12 +305,7 @@
 						await handleSetPanoMessage(event.data, 'smooth');
 					}
 				} else if (event.data.action === "resetPov") {
-					internalHeading = canonicalPov.heading;
-					instance.setPov({
-						heading: canonicalPov.heading,
-						pitch: canonicalPov.pitch,
-						zoom: fovToZoom(canonicalPov.fov),
-					})
+					resetPov();
 				} else if (event.data.action === "togglePaused") {
 					toggleManualPause();
 				}
